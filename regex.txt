@@ -1,0 +1,61 @@
+String regex = "(?!\\s*<%--)companyName(?!\\s*--%>)";
+String reg = "(?!.*<%--)"+keyword+"(?!.*--%>)";
+String regex = "(?!\\s*<%--)&(?!\\s*<!--)companyName(?!\\s*--%>)&(?!\\s*-->)";
+String regex = "companyNam(?=<%--.*--%>)";
+String regex = "companyName(?=\\s<%--.*--%>)|(?<=\\--%>)\\s(companyName)";
+String regex = "companyNae(?=\\s//)";
+
+
+Account(?=\s.*<%--.*--%>)|Account(?=\s.*<!--.*-->)
+
+working 
+
+String regex = ".*companyNae.*(?=\\s<%--.*--%>)|(?<=\\--%>)\\s.*(companyNae)|.*companyNae.*(?=\\s<!--.*-->)|(?<=\\-->)\\s.*(companyNae)";
+
+java
+companyName.*(?=/\\*.*\\*/)|(?=\\*/).*companyName
+
+String regex = ".*companyName.*(?=\\s<%--.*--%>)|(?<=\\--%>)\\s.*(companyName)|.*companyName.*(?=\\s<!--.*-->)|" +
+    			"(?<=\\-->)\\s.*(companyName)|companyName.*(?=/\\*.*\\*/)|(?<=\\*/).*companyName";
+
+String regex = ".*companyName.*(?=\\s<%--.*--%>)|.*companyName.*(?=\\s<%--)|(?<=\\--%>)\\s.*(companyName)|.*companyName.*(?=\\s<!--.*-->)" +
+    			"|.*companyName.*(?=\\s<!--)|(?<=\\-->)\\s.*(companyName)|companyName.*(?=/\\*.*\\*/)|.*companyName.*(?=\\s//*)" +
+    			"|(?<=\\*/).*companyName" +
+    			"|.*companyName.*(?=\\s//)";
+
+finding comments : (//*.*\\*/)|(<%--.*--%>)|(<!--.*-->)
+
+ignore multiline comment:
+
+\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\/
+
+start (\\/\\*)|(<%--)|(<!--)
+end (\\*/)|(--%>)|(-->)
+
+"(?=.*<%--)(?!.*--%>).*|(?=.*<!--)(?!.*-->).*|(?=.*\\/\\*)(?!.*\\*/).*|" +
+    			"^(?!.*<%--)(?=.*--%>).*|^(?!.*<!--)(?=.*-->).*|^(?!.*\\/\\*)(?=.*\\*/).*"
+
+start comment :
+String regex = "^(?=.*<%--)(?!.*--%>)|^(?=.*<!--)(?!.*-->)|^(?=.*\\/\\*)(?!.*\\*/)|^(?=.*--%>)(?=.*<%--)(?!.*--%>)|" +
+						"^(?=.*--%>)(?=.*<!--)(?!.*-->)|^(?=.*-->)(?=.*<%--)(?!.*--%>)|" +
+						"^(?=.*<%--)(?=.*--%>)(?=.*<%--)|^(?=.*<!--)(?=.*-->)(?=.*<!--)";
+
+end comment :
+String regex = "^(?!.*<%--)(?=.*--%>)(?!.*<%--)(?!.*<!--)|^(?!.*<!--)(?=.*-->)(?!.*<%--)|^(?!.*\\/\\*)(?=.*\\*/)|" +
+				"^(?=.*--%>)(?=.*<!--)(?=.*-->)|^(?=.*--%>)(?=.*<%--)&(?=.*--%>)|" +
+				"^(?=.*-->)(?=.*<%--)(?=.*--%>)|^(?=.*-->)(?=.*<!--)&(?=.*-->)";
+
+whole file comments:
+
+(companyName)(?=.*<%--)|(?!.*<%--)(companyName)
+^(companyName)(?=.*<%--)|^((?!.*<%--)(companyName))((?!.*<%--)+(?!.*--%>))
+
+^((?!badword).)*$
+
+.*companyName.*(?=\s<%--.*--%>)|.*companyName.*(?=\s<%--)|(?<=\\--%>)\s.*(companyName)|.*companyName.*(?=\s\/\/)|(?!.*<%--)companyName(?!.*--%>)|(?=.*<%--)(companyName)(?!.*--%>)
+
+select mulit comments
+
+\\/\\*([^*])*\\*+\\/
+final
+<%--(.|\\s)*?--%>|<!--(.|\\s)*?-->
