@@ -7,28 +7,30 @@ import java.util.List;
 import com.SearchRecord;
 import com.lib.Searcher;
 
-public class FileSearchProcessor {
+public class SearchProcessor {
 
 	private Searcher searcher;
-	private TextFileFilter filter = new TextFileFilter();
+	private FileFilter filter = new FileFilter();
 	private List<SearchRecord> recordsList = new ArrayList<SearchRecord>();
 	private int hitsCount=0;
 	private String filesDirectory;
 	private String filesTypes;
+	private boolean isFileProcessed;
 	
-	public FileSearchProcessor(String filesDirectory, String filesTypes) {
+	public SearchProcessor(String filesDirectory, String filesTypes) {
 		this.filesDirectory = filesDirectory;
 		this.filesTypes = filesTypes;
 	}
 	
-	public void processSearch(String keyword, String itemDescName, String columnName){
+	public void processSearch(String keyword, String itemDescName, String columnName, String tableName){
 		try {
 			startSearch(filesDirectory,filesTypes,keyword);
-			if(hitsCount==0){
+			if(isFileProcessed() && hitsCount==0){
 				SearchRecord doc = new SearchRecord(keyword);
 				doc.setHitsCount(hitsCount);
 				doc.setColumnName(columnName);
 				doc.setItemDescriptorName(itemDescName);
+				doc.setTableName(tableName);
 				addRecord(doc);
 			}
 		} catch (IOException e) {
@@ -36,7 +38,7 @@ public class FileSearchProcessor {
 		}
 	}
 	
-	private void startSearch(String dataDirPath, String filesTypes, String keyword) 
+	private void startSearch(String dataDirPath, String filesTypes, String keyword)
 		      throws IOException{
 
 	  searcher = new Searcher();
@@ -53,6 +55,7 @@ public class FileSearchProcessor {
     		            && filter.accept(file,filesTypes)
     		         ){
     		            searcher.search(file,keyword,this); 
+    		            setFileProcessed(true);
     		         }
     	 }
       }
@@ -70,7 +73,16 @@ public class FileSearchProcessor {
 		return recordsList;
 	}
 	
-	public void resetHitsCount(){
-		hitsCount=0;
+	public void resetFilesData(){
+		this.hitsCount=0;
+		this.isFileProcessed = false;
+	}
+
+	public boolean isFileProcessed() {
+		return isFileProcessed;
+	}
+
+	public void setFileProcessed(boolean isFileProcessed) {
+		this.isFileProcessed = isFileProcessed;
 	}
 }

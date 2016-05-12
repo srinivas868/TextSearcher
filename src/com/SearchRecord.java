@@ -14,6 +14,7 @@ public class SearchRecord implements Serializable{
 	private int hitsCount;
 	private String columnName;
 	private String itemDescriptorName;
+	private String tableName;
 	
 	public String getItemDescriptorName() {
 		return itemDescriptorName;
@@ -63,6 +64,16 @@ public class SearchRecord implements Serializable{
 	}
 	public SearchRecord(String propertyName) {
 		this.propertyName = propertyName;
+	}
+	public SearchRecord(String itemDescriptorName, String propertyName) {
+		this.propertyName = propertyName;
+		this.itemDescriptorName = itemDescriptorName;
+	}
+	public String getTableName() {
+		return tableName;
+	}
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
 	}
 	
 }

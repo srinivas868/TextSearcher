@@ -7,4 +7,6 @@ public class SearchConstants {
 	public static final String TABLE = "table";
 	public static final String NAME = "name";
 	public static final String COLUMN_NAME = "column-name";
+	public static final String EMPTY_STRING = "";
+	public static final String DEFAULT = "Default";
 }

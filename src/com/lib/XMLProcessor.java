@@ -14,11 +14,20 @@ import constants.SearchConstants;
 
 public class XMLProcessor {
 	
-	private static final String DEFAULT = "Default";
+	private static final String DERIVATION = "derivation";
+	private static final String EXPRESSION = "expression";
 	private String xmlFilePath;
+	private String derivedProperties;
+	public String getDerivedProperties() {
+		return derivedProperties;
+	}
 
+	public void setDerivedProperties(String derivedProperties) {
+		this.derivedProperties = derivedProperties;
+	}
 	public XMLProcessor(String xmlFilePath) {
 		this.xmlFilePath = xmlFilePath;
+		this.derivedProperties = SearchConstants.EMPTY_STRING;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -26,11 +35,10 @@ public class XMLProcessor {
 		
 		File inputFile = new File(xmlFilePath);
 		SAXReader saxReader = new SAXReader();
-		FileSearchProcessor searchProcessor = new FileSearchProcessor(filesDir, filesTypes);
+		SearchProcessor searchProcessor = new SearchProcessor(filesDir, filesTypes);
 		
 		try {
 			Document document = saxReader.read(inputFile);
-			Element rootElement = document.getRootElement();
 			
 			List<Node> selectNodes = document.selectNodes(SearchConstants.ROOT_NODE);
 			for (Node node : selectNodes) {
@@ -38,24 +46,22 @@ public class XMLProcessor {
 				String itemName = itemDescriptorElement.attributeValue(SearchConstants.NAME);
 				System.out.println("Item descriptor ==========================="+itemName);
 				List<Object> elements = itemDescriptorElement.elements();
-				
+				Element propertyElement = null;
 				for (Object object : elements) {
 					Element element = (Element)object;
 					if(element.getName().equalsIgnoreCase(SearchConstants.TABLE)){
-						
-						List<Object> properties = element.elements();
-						for (Object property : properties) {
-							Element propertyElement = (Element)property;
-							String propertyName = propertyElement.attributeValue(SearchConstants.NAME);
-							List<Object> propertyElements = propertyElement.elements();
-							
-							//boolean isDerived = checkForDerivedProperty(propertyElements);
-							if(!propertyName.endsWith(DEFAULT)){
-								String columnName = propertyElement.attributeValue(SearchConstants.COLUMN_NAME);
-								searchProcessor.processSearch(propertyName,itemName,columnName);
-								searchProcessor.resetHitsCount();
+						String tableName = element.attributeValue(SearchConstants.NAME);
+						if(!tableName.startsWith("dcs")){
+							List<Object> properties = element.elements();
+							for (Object property : properties) {
+								propertyElement = (Element)property;
+								initiateSearch(propertyElement,itemName,searchProcessor,tableName);
 							}
 						}
+					}
+					else if(element.getName().equalsIgnoreCase("property")){
+						propertyElement = (Element)element;
+						initiateSearch(propertyElement,itemName,searchProcessor,SearchConstants.EMPTY_STRING);
 					}
 				}
 			}
@@ -66,21 +72,49 @@ public class XMLProcessor {
 		}
 		return searchProcessor.getDocuments();
 	}
-
-	public boolean checkForDerivedProperty(List<Object> propertyElements) {
+	
+	public void initiateSearch(Element propertyElement, String itemName, SearchProcessor searchProcessor, String tableName){
+		List<Object> propertyElements = propertyElement.elements();
 		
-		for(Object element : propertyElements){
-			Element childElement = (Element)element;
-			childElement.getName();
-			if(childElement.getName().equalsIgnoreCase(("derivation"))){
-				return true;
-			}
+		String derivedValue = checkForDerivedProperty(propertyElements);
+		if(derivedValue != null){
+			populateDerivedProperty(derivedValue);
 		}
-		return false;
+		String propertyName = propertyElement.attributeValue(SearchConstants.NAME);
+		String columnName = propertyElement.attributeValue(SearchConstants.COLUMN_NAME);
+		searchProcessor.processSearch(propertyName,itemName,columnName,tableName);
+		searchProcessor.resetFilesData();
 	}
 
-	public void processDocuments() {
+	public String checkForDerivedProperty(List<Object> propertyElements) {
 		
+		String derivedValue = null;
+		for(Object element : propertyElements){
+			
+			Element childElement = (Element)element;
+			String temp = childElement.getName();
+			if(childElement.getName().equalsIgnoreCase(DERIVATION)){
+				List<Object> derivationElements = childElement.elements();
+				
+				for(Object derivationElement : derivationElements){
+					Element dElement = (Element)derivationElement;
+					if(dElement.getName().equalsIgnoreCase(EXPRESSION)){
+						derivedValue = dElement.getStringValue();
+					}
+				}
+			}
+		}
+		return derivedValue;
+	}
+
+	public void populateDerivedProperty(String propertyName) {
+		
+		if(getDerivedProperties().equalsIgnoreCase(SearchConstants.EMPTY_STRING)){
+			setDerivedProperties(propertyName);
+		}
+		else{
+			setDerivedProperties(getDerivedProperties()+","+propertyName);
+		}
 	}
 
 }

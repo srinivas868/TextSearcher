@@ -1,9 +1,8 @@
 package com.lib;
 
 import java.io.File;
-import java.io.FileFilter;
 
-public class TextFileFilter {
+public class FileFilter {
 
    public boolean accept(File file, String fileType) {
 	   
