@@ -18,6 +18,7 @@ public class XMLProcessor {
 	private static final String EXPRESSION = "expression";
 	private String xmlFilePath;
 	private String derivedProperties;
+	
 	public String getDerivedProperties() {
 		return derivedProperties;
 	}

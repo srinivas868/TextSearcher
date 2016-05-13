@@ -10,14 +10,15 @@ public class CustomTextSearcher {
 
 	public static void main(String []args){
 		
-		String filesDir = "E:\\Plantronics\\ATG\\ATG11.1\\Plantronics";
 		//String filesDir = "C:\\Users\\Nvizion\\Downloads\\data\\New folder\\New folder";
-		//String definitionFilePath = "C:\\Users\\Nvizion\\Downloads\\data\\customCatalog.xml";
+		String filesDir = "E:\\Plantronics\\ATG\\ATG11.1\\Plantronics";
 		String definitionFilePath = "E:\\Plantronics\\ATG\\ATG11.1\\Plantronics\\config\\atg\\commerce\\catalog\\custom\\customCatalog.xml";
 		String csvDir = "E:\\Nviz\\CSV_files";
-		String csvFileName = "Need to be removed_12May.csv";
+		String csvFileName = "Need to be removed_13May_v1.csv";
 		String dbCsvFile = "C:\\Users\\Nvizion\\Desktop\\Report.csv";
 		String filesTypes = "*.java,*.jsp,*.jspf,*.txt";
+		String ootbCsvFileName = "E:\\Nviz\\CSV_files\\Catalog_OOTB_Properties.csv";
+		
 		List<SearchRecord> recordsList = new ArrayList<SearchRecord>();
 		
 		XMLProcessor xmlProcessor = new XMLProcessor(definitionFilePath);
@@ -28,7 +29,8 @@ public class CustomTextSearcher {
 				System.out.println("Document --> "+doc.getPropertyName()+" column name : "+doc.getColumnName());
 			}
 			System.out.println("Derived properties "+xmlProcessor.getDerivedProperties());
-			SearchRecordsWriter writer = new SearchRecordsWriter(csvDir,csvFileName,dbCsvFile);
+			System.out.println("Started writing to CSV ");
+			SearchRecordsWriter writer = new SearchRecordsWriter(csvDir, csvFileName, dbCsvFile, ootbCsvFileName);
 			writer.startWritingTOCsv(recordsList,xmlProcessor.getDerivedProperties());
 		} catch (IOException e) {
 			System.out.println("Unable to Search "+e);

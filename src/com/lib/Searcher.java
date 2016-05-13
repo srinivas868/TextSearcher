@@ -1,6 +1,5 @@
 package com.lib;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,17 +11,14 @@ import org.apache.commons.io.IOUtils;
 
 public class Searcher {
 
-	Matcher matcher;
-	Pattern pattern;
-	Pattern commentsPattern;
-	boolean isComment;
-	
 	public void search(File file, String keyword, SearchProcessor searchProcessor){
+		
 		String regex = constructRegEx(keyword);
-		pattern = Pattern.compile(regex);
+		Pattern pattern = Pattern.compile(regex);
 		FileInputStream inputStream ;
+		Pattern commentsPattern;
+		Matcher matcher;
 		String fileString = "";
-		Matcher matcher = null;
 		String commentsRegex = constructCommentsRegEx(file.getAbsolutePath());
 		
 		if(commentsRegex != null){
@@ -36,6 +32,9 @@ public class Searcher {
 					fileString = fileString.replace(matcher.group(), "");
 				}
 				matcher = pattern.matcher(fileString);
+				while(matcher.find()){
+					searchProcessor.incrementHitsCount();
+				}
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

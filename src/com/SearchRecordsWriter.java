@@ -21,12 +21,15 @@ public class SearchRecordsWriter {
 	private String csvFileName;
 	private String dbCsvFileName;
 	private String[] headerArray = {"ItemDescriptor", "TABLE_NAME", "PROPERTY", "COLUMN_NAME", "USING_IN_CODEBASE", "NOT_NULL_COUNT"};
-	private String fileContent = "";
+	private String dbFileContent;
+	private String ootbFileContent;
+	private String ootbCsvFileName;
 	
-	SearchRecordsWriter(String csvDir, String csvFileName, String dbCsvFileName){
+	SearchRecordsWriter(String csvDir, String csvFileName, String dbCsvFileName, String ootbCsvFileName){
 		this.csvDir = csvDir;
 		this.csvFileName = csvFileName;
 		this.dbCsvFileName = dbCsvFileName;
+		this.ootbCsvFileName = ootbCsvFileName;
 	}
 	
 	public void startWritingTOCsv(List<SearchRecord> recordsList, String pDerivedProperties) throws IOException{
@@ -35,11 +38,13 @@ public class SearchRecordsWriter {
 		writer = new CsvWriter(new FileWriter(csvDir+"\\"+csvFileName, true), ',');
 		writer.writeRecord(headerArray);
 		
-		readCsvFile();
+		this.dbFileContent = readCsvFile(dbCsvFileName);							//read db data csv
+		this.ootbFileContent = readCsvFile(ootbCsvFileName);						//read ootb properties info csv
 		
 		for(SearchRecord record : recordsList){
 			
-			if(!pDerivedProperties.contains(record.getPropertyName())){
+			if(!pDerivedProperties.contains(record.getPropertyName()) && 
+					!isOOTBProperty(record.getItemDescriptorName(), record.getPropertyName())){
 				
 				if(!currentItemDescName.equalsIgnoreCase(record.getItemDescriptorName())){
 					writer.write(record.getItemDescriptorName());
@@ -66,21 +71,7 @@ public class SearchRecordsWriter {
 			}
 		}
 		writer.close();
-	}
-	
-	public void readCsvFile(){
-		
-		FileInputStream inputStream ;
-		File csvFile = new File(dbCsvFileName);
-		try{
-			inputStream = new FileInputStream(csvFile);
-			fileContent = IOUtils.toString(inputStream, "UTF-8");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("File reading exception "+csvFile.getAbsolutePath());
-			e.printStackTrace();
-		}
+		System.out.println("Completed writing contents to CSV ---->> "+csvDir+"\\"+csvFileName);
 	}
 	
 	public String getColumnDataFromCsv(String tableName, String columnName) {
@@ -91,7 +82,7 @@ public class SearchRecordsWriter {
 		}
 		String regex = constructRegEx(tableName, columnName);
 		Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(fileContent);
+		Matcher matcher = pattern.matcher(dbFileContent);
 		
 		while(matcher.find()){
 			matchedLine = matcher.group();
@@ -99,9 +90,40 @@ public class SearchRecordsWriter {
 		return matchedLine;
 	}
 
-	private String constructRegEx(String tableName, String columnName) {
-		String regex = "(\\b"+tableName+"\\b).*(\\b"+columnName+"\\b).*";
-		return regex;
+	public boolean isOOTBProperty(String itemName, String propertyName) {
+		
+		if(ootbFileContent == null){
+			return false;
+		}
+		String regex = constructRegEx(itemName, propertyName);
+		Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(ootbFileContent);
+		if(matcher.find()){
+			return true;
+		}
+		return false;
 	}
-
+	
+	public String constructRegEx(String arg1, String arg2) {
+		return "(\\b"+arg1+"\\b).*(\\b"+arg2+"\\b).*";
+	}
+	
+	public String readCsvFile(String csvFileName){
+		
+		if(csvFileName == null || csvFileName.equalsIgnoreCase("")){
+			return null;
+		}
+		FileInputStream inputStream ;
+		File csvFile = new File(csvFileName);
+		try{
+			inputStream = new FileInputStream(csvFile);
+			return IOUtils.toString(inputStream, "UTF-8");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("File reading exception "+csvFile.getAbsolutePath());
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
