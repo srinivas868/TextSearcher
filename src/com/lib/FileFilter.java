@@ -4,7 +4,7 @@ import java.io.File;
 
 public class FileFilter {
 
-   public boolean accept(File file, String fileType) {
+   public static boolean accept(File file, String fileType) {
 	   
 	   if(fileType!=null && !fileType.equalsIgnoreCase("")){
 		   String[] splitFileType = fileType.split(",");

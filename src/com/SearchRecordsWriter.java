@@ -32,6 +32,7 @@ public class SearchRecordsWriter {
 		this.ootbCsvFileName = ootbCsvFileName;
 	}
 	
+
 	public void startWritingTOCsv(List<SearchRecord> recordsList, String pDerivedProperties) throws IOException{
 		
 		String currentItemDescName ="";

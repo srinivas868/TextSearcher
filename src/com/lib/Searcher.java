@@ -11,7 +11,7 @@ import org.apache.commons.io.IOUtils;
 
 public class Searcher {
 
-	public void search(File file, String keyword, SearchProcessor searchProcessor){
+	/*public void search(File file, String keyword, SearchProcessor searchProcessor){
 		
 		String regex = constructRegEx(keyword);
 		Pattern pattern = Pattern.compile(regex);
@@ -46,15 +46,15 @@ public class Searcher {
 			System.out.println("Did not find regex for matching comments pattern for file "+file.getAbsolutePath());
 		}
 		
-	}
+	}*/
 
-	private String constructRegEx(String keyword) {
+	public static String constructRegEx(String keyword) {
 		String regex2 = "\\b"+keyword+"\\b";
 		String regex = "\bcompanyName\b.*(?=//(.*))";
 		return regex2;
 	}
 	
-	private String constructCommentsRegEx(String fileType){
+	public static String constructCommentsRegEx(String fileType){
 		if((fileType == null) || (fileType.length() == 0) || (fileType.trim().length() == 0)){
 			return null;
 		}
@@ -72,14 +72,5 @@ public class Searcher {
 		return regex;
 	}
 	
-	private String getFileExtension(File file){
-		String extension = null;
-
-		int i = file.getAbsolutePath().lastIndexOf('.');
-		if (i >= 0) {
-		    extension = file.getAbsolutePath().substring(i+1);
-		}
-		
-		return extension;
-	}
+	
 }
