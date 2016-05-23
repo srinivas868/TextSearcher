@@ -48,7 +48,7 @@ public class XMLProcessor {
 		
 		try {
 			Document document = saxReader.read(inputFile);
-			ExecutorService executor = Executors.newFixedThreadPool(50);
+			ExecutorService executor = Executors.newFixedThreadPool(200);
 			
 			List<Node> selectNodes = document.selectNodes(SearchConstants.ROOT_NODE);
 			for (Node node : selectNodes) {

@@ -25,7 +25,8 @@ public class CustomTextSearcher {
 		
 		XMLProcessor xmlProcessor = new XMLProcessor(definitionFilePath);
 		try {
-			xmlProcessor.processXML(filesDir, filesTypes);
+			
+			xmlProcessor.processXML(filesDir, filesTypes);						//reads xml and search
 			recordsList = xmlProcessor.getDocuments();
 			System.out.println("Done processing XML");
 			for(SearchRecord doc : recordsList){
