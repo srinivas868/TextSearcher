@@ -10,14 +10,14 @@ public class CustomTextSearcher {
 
 	public static void main(String []args){
 		
-		String filesDir = "E:\\Plantronics\\ATG\\ATG11.1\\Plantronics";
-		String definitionFilePath = "E:\\Plantronics\\ATG\\ATG11.1\\Plantronics\\config\\atg\\commerce\\catalog\\custom\\customCatalog.xml";
+		String filesDir = "E:\\Plantronics\\git\\plantronics";
+		String definitionFilePath = "E:\\Plantronics\\git\\plantronics\\config\\atg\\commerce\\claimable\\claimableRepository.xml";
 		//String definitionFilePath = "C:\\Users\\Nvizion\\Downloads\\data\\customCatalog.xml";
 		String csvDir = "E:\\Nviz\\CSV_files";
-		String csvFileName = "Need to be removed_13May_v2.csv";
-		String dbCsvFile = "E:\\Plantronics\\Catalog cleanup\\Report_1.csv";
+		String csvFileName = "Need to be removed_claimable_v1.csv";
+		String dbCsvFile = "E:\\Nviz\\CSV_files\\Report_region_v1.csv";
 		String filesTypes = "*.java,*.jsp,*.jspf,*.txt";
-		String ootbCsvFileName = "E:\\Nviz\\CSV_files\\Catalog_OOTB_Properties.csv";
+		String ootbCsvFileName = "E:\\Nviz\\CSV_files\\Claimable_OOTB_Properties.csv";
 		
 		long startTime = (System.currentTimeMillis()/1000);
 		

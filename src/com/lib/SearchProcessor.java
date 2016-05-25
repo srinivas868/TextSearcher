@@ -28,6 +28,7 @@ public class SearchProcessor implements Runnable{
 	private String keyword;
 	private SearchRecord record;
 	private XMLProcessor xmlProcessor;
+	private int filesCount;
 	
 	public SearchProcessor(String filesDirectory, String filesTypes, String keyword, 
 								String itemDescName, String columnName, String tableName, XMLProcessor xmlProcessor) {
@@ -44,6 +45,7 @@ public class SearchProcessor implements Runnable{
 	public void processSearch(){
 		try {
 			startSearch(filesDirectory,filesTypes,keyword);
+			System.out.println("Files count -->> "+filesCount);
 			if(isFileProcessed() && hitsCount==0){
 				this.record = new SearchRecord(keyword);
 				record.setHitsCount(hitsCount);
@@ -76,6 +78,7 @@ public class SearchProcessor implements Runnable{
     		         ){
     		            search(file,keyword,this); 
     		            setFileProcessed(true);
+    		            filesCount++;
     		         }
     	 }
       }
@@ -83,7 +86,7 @@ public class SearchProcessor implements Runnable{
 	
 	public void search(File file, String keyword, SearchProcessor searchProcessor){
 		
-		String regex = Searcher.constructRegEx(keyword);
+		String regex = Searcher.constructRegEx(keyword, file.getAbsolutePath());
 		Pattern pattern = Pattern.compile(regex);
 		FileInputStream inputStream ;
 		Pattern commentsPattern;
@@ -104,6 +107,7 @@ public class SearchProcessor implements Runnable{
 				matcher = pattern.matcher(fileString);
 				while(matcher.find()){
 					searchProcessor.incrementHitsCount();
+					System.out.println("Found -->> "+file.getAbsolutePath());
 				}
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();

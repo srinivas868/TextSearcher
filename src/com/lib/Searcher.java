@@ -48,25 +48,36 @@ public class Searcher {
 		
 	}*/
 
-	public static String constructRegEx(String keyword) {
-		String regex2 = "\\b"+keyword+"\\b";
-		String regex = "\bcompanyName\b.*(?=//(.*))";
-		return regex2;
+	public static String constructRegEx(String keyword, String fileName) {
+		
+		if((fileName == null) || (fileName.length() == 0) || (fileName.trim().length() == 0)){
+			return null;
+		}
+		String regex = null;
+		if(fileName.endsWith(".jspf")||fileName.endsWith(".jsp")){
+			regex = "\\.\\b"+keyword+"\\b";
+		}
+		else{
+			regex = "\\b"+keyword+"\\b";
+		}
+		
+		//String regex = "\bcompanyName\b.*(?=//(.*))";
+		return regex;
 	}
 	
-	public static String constructCommentsRegEx(String fileType){
-		if((fileType == null) || (fileType.length() == 0) || (fileType.trim().length() == 0)){
+	public static String constructCommentsRegEx(String fileName){
+		if((fileName == null) || (fileName.length() == 0) || (fileName.trim().length() == 0)){
 			return null;
 		}
 		String regex = null;
 		
-		if(fileType.endsWith(".java")){
+		if(fileName.endsWith(".java")){
 			regex = "<%--(.|\\s)*?--%>|<!--(.|\\s)*?-->|\\/\\*(.|\\s)*?\\*/|//(.*)";
 		}
-		else if(fileType.endsWith(".jspf")||fileType.endsWith(".jsp")||fileType.endsWith(".txt")){
+		else if(fileName.endsWith(".jspf")||fileName.endsWith(".jsp")||fileName.endsWith(".txt")){
 			regex = "<%--(.|\\s)*?--%>|<!--(.|\\s)*?-->";
 		}
-		else if(fileType.endsWith(".js")){
+		else if(fileName.endsWith(".js")){
 			regex = "\\/\\*(.|\\s)*?\\*/|//(.*)";
 		}
 		return regex;

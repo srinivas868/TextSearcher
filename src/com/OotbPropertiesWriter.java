@@ -14,16 +14,21 @@ import org.dom4j.io.SAXReader;
 import com.csvreader.CsvWriter;
 import constants.SearchConstants;
 
+/**
+ * this class will list out the OOTB properties declared as transient
+ * @author Nvizion
+ *
+ */
 public class OotbPropertiesWriter {
 
 	private static final String PROPERTY = "property";
 	private List<SearchRecord> recordsList = new ArrayList<SearchRecord>();
 	private String[] headerArray = {"ITEM_DESCRIPTOR", "PROPERTY"};
 	private String csvDir = "E:\\Nviz\\CSV_files";
-	private String csvFileName = "OOTB_Properties.csv";
+	private String csvFileName = "Claimable_OOTB_Properties.csv";
 	
 	public static void main(String[] args) {
-		String xmlFilePath = "E:\\Nviz\\CSV_files\\customCatalog.xml";
+		String xmlFilePath = "E:\\Nviz\\CSV_files\\claimableRepository.xml";
 		OotbPropertiesWriter writer = new OotbPropertiesWriter();
 		try {
 			System.out.println("Reading XML file -----------> "+xmlFilePath);
@@ -56,6 +61,7 @@ public class OotbPropertiesWriter {
 				Element propertyElement = null;
 				for (Object object : elements) {
 					Element element = (Element)object;
+						//consider only transient properties
 						if(element.getName().equalsIgnoreCase(PROPERTY)){
 							propertyElement = (Element)element;
 							String propertyName = propertyElement.attributeValue(SearchConstants.NAME);
