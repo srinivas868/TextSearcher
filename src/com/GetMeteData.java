@@ -23,7 +23,7 @@ public class GetMeteData {
 	public static void main(String[] args) throws IOException {
 		
 		File inputFile = new File("C:/Nviz/plt/catalogClenup/customCatalog.xml");
-		String csvFileName = "C:/Nviz/plt/catalogClenup/catalog.csv";
+		String csvFileName = "C:/Nviz/plt/catalogClenup/customCatalog_metadata_Report.csv";
 		SAXReader saxReader = new SAXReader();
 		List<String[]> headerList = new ArrayList<String[]>();
 		//define the header in CSV file
@@ -65,7 +65,12 @@ public class GetMeteData {
 									detailsPropertyList.add("");
 									detailsPropertyList.add("");
 									detailsPropertyList.add(propertyElement.attributeValue("name"));
+									if(null!=propertyElement.attributeValue("column-name")){
 									detailsPropertyList.add(propertyElement.attributeValue("column-name"));
+									}
+									else{
+										detailsPropertyList.add(propertyElement.attributeValue("column-names"));
+									}
 									detailsPropertyList.add(propertyElement.attributeValue("item-type"));
 									detailsPropertyList.add(propertyElement.attributeValue("component-item-type"));
 									detailsPropertyList.add(propertyElement.attributeValue("data-type"));
@@ -92,6 +97,7 @@ public class GetMeteData {
  public static List<String> addDbColumns(List<String> detailsPropertyList,String currentTable){
 
 		try {
+			int i=0;
 			//reading the input csv file.
 			@SuppressWarnings("resource")
 			CSVReader reader = new CSVReader(new FileReader("C:/Nviz/plt/catalogClenup/Report_1.csv"));
@@ -115,6 +121,7 @@ public class GetMeteData {
 			varcharMap.put("VARCHAR2",varcharList);
 			
 			for(String[] readRow:readAll){
+				
 				
 				if(currentTable.equalsIgnoreCase(readRow[0]) && detailsPropertyList.get(3).equalsIgnoreCase(readRow[1]) ){
 					//adding column datatype in db to csv file.
