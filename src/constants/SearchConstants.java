@@ -9,4 +9,8 @@ public class SearchConstants {
 	public static final String COLUMN_NAME = "column-name";
 	public static final String EMPTY_STRING = "";
 	public static final String DEFAULT = "Default";
+	public static final String DCS = "dcs";
+	public static final String PROPERTY = "property";
+	public static final String DERIVATION = "derivation";
+	public static final String EXPRESSION = "expression";
 }

@@ -1,4 +1,4 @@
-package com;
+package com.nviz;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,7 +16,7 @@ import constants.SearchConstants;
 
 /**
  * this class will list out the OOTB properties declared as transient
- * @author Nvizion
+ * @author Srinivas
  *
  */
 public class OotbPropertiesWriter {

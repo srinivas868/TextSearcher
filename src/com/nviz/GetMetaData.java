@@ -1,4 +1,4 @@
-package com;
+package com.nviz;
 
 import java.io.File;
 import java.io.FileReader;
@@ -17,7 +17,7 @@ import org.dom4j.io.SAXReader;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
-public class GetMeteData {
+public class GetMetaData {
 
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException {

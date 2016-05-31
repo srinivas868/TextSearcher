@@ -1,16 +1,19 @@
-package com;
+package com.nviz;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 
+import com.lib.SearchRecord;
 import com.csvreader.CsvWriter;
 
 
@@ -20,7 +23,8 @@ public class SearchRecordsWriter {
 	private String csvDir;
 	private String csvFileName;
 	private String dbCsvFileName;
-	private String[] headerArray = {"ItemDescriptor", "TABLE_NAME", "PROPERTY", "COLUMN_NAME", "USING_IN_CODEBASE", "NOT_NULL_COUNT"};
+	private String[] headerArray = {"ItemDescriptor", "TABLE_NAME", "PROPERTY", "COLUMN_NAME", 
+									"USING_IN_CODEBASE", "NOT_NULL_COUNT", "COMMON_PROPERTY"};
 	private String dbFileContent;
 	private String ootbFileContent;
 	private String ootbCsvFileName;
@@ -32,7 +36,6 @@ public class SearchRecordsWriter {
 		this.ootbCsvFileName = ootbCsvFileName;
 	}
 	
-
 	public void startWritingTOCsv(List<SearchRecord> recordsList, String pDerivedProperties) throws IOException{
 		
 		String currentItemDescName ="";
@@ -40,10 +43,14 @@ public class SearchRecordsWriter {
 		writer.writeRecord(headerArray);
 		
 		this.dbFileContent = readCsvFile(dbCsvFileName);							//read db data csv
-		this.ootbFileContent = readCsvFile(ootbCsvFileName);						//read ootb properties info csv
+		if(ootbCsvFileName != null && !ootbCsvFileName.equalsIgnoreCase("")){
+			this.ootbFileContent = readCsvFile(ootbCsvFileName);				//read ootb properties info csv
+		}
 		
+		Collections.sort(recordsList, new ItemDescNameComparator());
 		for(SearchRecord record : recordsList){
 			
+			boolean commonProperty = record.isCommonProperty();
 			if(!pDerivedProperties.contains(record.getPropertyName()) && 
 					!isOOTBProperty(record.getItemDescriptorName(), record.getPropertyName())){
 				
@@ -57,8 +64,21 @@ public class SearchRecordsWriter {
 				writer.write(record.getTableName());
 				writer.write(record.getPropertyName());
 				writer.write(record.getColumnName());
-				writer.write("No");
-				String matchedLine = getColumnDataFromCsv(record.getTableName(),record.getColumnName());
+				if(commonProperty){
+					writer.write("Yes");
+				}
+				else{
+					writer.write("No");
+				}
+
+				String matchedLine = null;
+				String columnName = record.getColumnName();
+				if(columnName == null || columnName.equalsIgnoreCase("")){
+					matchedLine = getColumnDataFromCsv(record.getTableName(),record.getPropertyName());
+				}
+				else{
+					matchedLine = getColumnDataFromCsv(record.getTableName(),columnName);
+				}
 				
 				if(matchedLine != null){
 					int index = matchedLine.lastIndexOf(",");
@@ -67,6 +87,12 @@ public class SearchRecordsWriter {
 				}
 				else{
 					writer.write("");
+				}
+				if(commonProperty){
+					writer.write("Yes");
+				}
+				else{
+					writer.write("No");
 				}
 				writer.endRecord();
 			}
@@ -127,4 +153,14 @@ public class SearchRecordsWriter {
 		}
 		return null;
 	}
+}
+
+class ItemDescNameComparator implements Comparator<SearchRecord>{
+
+	@Override
+	public int compare(SearchRecord o1, SearchRecord o2) {
+		return o1.getItemDescriptorName()
+				.compareToIgnoreCase(o2.getItemDescriptorName());
+	}
+	
 }

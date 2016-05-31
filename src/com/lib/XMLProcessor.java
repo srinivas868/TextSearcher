@@ -13,19 +13,17 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
-import com.SearchRecord;
+import com.CommonPropertiesExtractor;
+import com.lib.SearchRecord;
 
 import constants.SearchConstants;
 
 public class XMLProcessor {
 	
-	private static final String DCS = "dcs";
-	private static final String PROPERTY = "property";
-	private static final String DERIVATION = "derivation";
-	private static final String EXPRESSION = "expression";
 	private List<SearchRecord> recordsList;
 	private String xmlFilePath;
 	private String derivedProperties;
+	private String definitionFilesDir = null;
 	
 	public String getDerivedProperties() {
 		return derivedProperties;
@@ -34,10 +32,11 @@ public class XMLProcessor {
 	public void setDerivedProperties(String derivedProperties) {
 		this.derivedProperties = derivedProperties;
 	}
-	public XMLProcessor(String xmlFilePath) {
+	public XMLProcessor(String xmlFilePath, String definitionFilesDir) {
 		this.xmlFilePath = xmlFilePath;
 		this.derivedProperties = SearchConstants.EMPTY_STRING;
 		this.recordsList = new ArrayList<SearchRecord>();
+		this.definitionFilesDir = definitionFilesDir;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -45,6 +44,8 @@ public class XMLProcessor {
 		
 		File inputFile = new File(xmlFilePath);
 		SAXReader saxReader = new SAXReader();
+		CommonPropertiesExtractor extractor = new CommonPropertiesExtractor(definitionFilesDir);
+		String commonProperties = extractor.getCommonProperties();
 		
 		try {
 			Document document = saxReader.read(inputFile);
@@ -62,14 +63,15 @@ public class XMLProcessor {
 				for (Object object : elements) {
 					Element element = (Element)object;
 					
-					if(element.getName().equalsIgnoreCase(PROPERTY)){
+					if(element.getName().equalsIgnoreCase(SearchConstants.PROPERTY)){
 						Element propertyElement = (Element)element;
 						List<Object> propertyElements = propertyElement.elements();
 						String propertyName = propertyElement.attributeValue(SearchConstants.NAME);
 						String columnName = propertyElement.attributeValue(SearchConstants.COLUMN_NAME);
 						checkForDerivedProperty(propertyElements);
 						Runnable searchProcessor = new SearchProcessor(filesDir, filesTypes, propertyName, 
-															itemName, columnName, SearchConstants.EMPTY_STRING, this);
+															itemName, columnName, SearchConstants.EMPTY_STRING, 
+															commonProperties, this);
 						executor.execute(searchProcessor);
 					}
 					else if(element.getName().equalsIgnoreCase(SearchConstants.TABLE)){
@@ -89,8 +91,10 @@ public class XMLProcessor {
 							String propertyName = propertyElement.attributeValue(SearchConstants.NAME);
 							String columnName = propertyElement.attributeValue(SearchConstants.COLUMN_NAME);
 							
-							if(!derivedProperties.contains(propertyName) && !tableName.startsWith(DCS)){
-								Runnable searchProcessor = new SearchProcessor(filesDir, filesTypes, propertyName, itemName, columnName, tableName, this);
+							if(!derivedProperties.contains(propertyName) && !tableName.startsWith(SearchConstants.DCS)){
+								Runnable searchProcessor = new SearchProcessor(filesDir, filesTypes, propertyName, 
+																	itemName, columnName, tableName, 
+																	commonProperties, this);
 								executor.execute(searchProcessor);
 							}
 						}
@@ -114,13 +118,12 @@ public class XMLProcessor {
 		for(Object element : propertyElements){
 			
 			Element childElement = (Element)element;
-			String temp = childElement.getName();
-			if(childElement.getName().equalsIgnoreCase(DERIVATION)){
+			if(childElement.getName().equalsIgnoreCase(SearchConstants.DERIVATION)){
 				List<Object> derivationElements = childElement.elements();
 				
 				for(Object derivationElement : derivationElements){
 					Element dElement = (Element)derivationElement;
-					if(dElement.getName().equalsIgnoreCase(EXPRESSION)){
+					if(dElement.getName().equalsIgnoreCase(SearchConstants.EXPRESSION)){
 						derivedValue = dElement.getStringValue();
 					}
 				}

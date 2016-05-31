@@ -1,4 +1,4 @@
-package com;
+package com.nviz;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +14,11 @@ import org.dom4j.io.SAXReader;
 
 import constants.SearchConstants;
 
+/**
+ * this class will extract all the many-many relation tables from given repository
+ * @author Srinivas
+ *
+ */
 public class MultiRelationTablesExtractor {
 	
 	private static final String SHARED_TABLE_SEQUENCE = "shared-table-sequence";
@@ -29,7 +34,7 @@ public class MultiRelationTablesExtractor {
 
 	public static void main(String[] args) {
 		
-		String xmlFilePath = "E:\\Nviz\\CSV_files\\customCatalog_plt.xml";
+		String xmlFilePath = "E:\\Plantronics\\Catalog-cleanup\\repositories\\userProfile.xml";
 		MultiRelationTablesExtractor extractor = new MultiRelationTablesExtractor();
 		try {
 			System.out.println("Reading XML file -----------> "+xmlFilePath);
@@ -54,7 +59,7 @@ public class MultiRelationTablesExtractor {
 			for (Node node : selectNodes) {
 				Element itemDescriptorElement = (Element)node;
 				String itemName = itemDescriptorElement.attributeValue(SearchConstants.NAME);
-				System.out.println("Item descriptor ==========================="+itemName);
+				//System.out.println("Item descriptor ==========================="+itemName);
 				List<Object> elements = itemDescriptorElement.elements();
 				Element tableElement = null;
 				for (Object object : elements) {

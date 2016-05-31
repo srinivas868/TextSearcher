@@ -1,4 +1,4 @@
-package com;
+package com.lib;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,6 +15,7 @@ public class SearchRecord implements Serializable{
 	private String columnName;
 	private String itemDescriptorName;
 	private String tableName;
+	private boolean isCommonProperty;
 	
 	public String getItemDescriptorName() {
 		return itemDescriptorName;
@@ -74,6 +75,12 @@ public class SearchRecord implements Serializable{
 	}
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
+	}
+	public boolean isCommonProperty() {
+		return isCommonProperty;
+	}
+	public void setCommonProperty(boolean isCommonProperty) {
+		this.isCommonProperty = isCommonProperty;
 	}
 	
 }

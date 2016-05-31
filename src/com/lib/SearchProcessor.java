@@ -4,16 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.swing.text.Document;
-
 import org.apache.commons.io.IOUtils;
 
-import com.SearchRecord;
+import com.lib.SearchRecord;
 import com.lib.Searcher;
 
 public class SearchProcessor implements Runnable{
@@ -28,10 +23,11 @@ public class SearchProcessor implements Runnable{
 	private String keyword;
 	private SearchRecord record;
 	private XMLProcessor xmlProcessor;
-	private int filesCount;
+	private String commonProperties = null; 
 	
 	public SearchProcessor(String filesDirectory, String filesTypes, String keyword, 
-								String itemDescName, String columnName, String tableName, XMLProcessor xmlProcessor) {
+								String itemDescName, String columnName, String tableName, 
+								String commonProperties, XMLProcessor xmlProcessor) {
 		this.filesDirectory = filesDirectory;
 		this.filesTypes = filesTypes;
 		this.itemDescName = itemDescName;
@@ -40,21 +36,29 @@ public class SearchProcessor implements Runnable{
 		this.keyword = keyword;
 		this.hitsCount = 0;
 		this.xmlProcessor = xmlProcessor;
+		this.commonProperties = commonProperties;
 	}
 	
 	public void processSearch(){
 		try {
 			startSearch(filesDirectory,filesTypes,keyword);
-			System.out.println("Files count -->> "+filesCount);
+			
+			this.record = new SearchRecord(keyword);
+			record.setHitsCount(hitsCount);
+			record.setColumnName(columnName);
+			record.setItemDescriptorName(itemDescName);
+			record.setTableName(tableName);
+			
 			if(isFileProcessed() && hitsCount==0){
-				this.record = new SearchRecord(keyword);
-				record.setHitsCount(hitsCount);
-				record.setColumnName(columnName);
-				record.setItemDescriptorName(itemDescName);
-				record.setTableName(tableName);
-				
+				record.setCommonProperty(false);
 				xmlProcessor.addRecord(record);
 			}
+			else if(isFileProcessed() && hitsCount>0 
+								&& this.commonProperties.contains(keyword)){
+				record.setCommonProperty(true);
+				xmlProcessor.addRecord(record);
+			}
+			
 			System.out.println(Thread.currentThread().getName()+" End");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -78,7 +82,6 @@ public class SearchProcessor implements Runnable{
     		         ){
     		            search(file,keyword,this); 
     		            setFileProcessed(true);
-    		            filesCount++;
     		         }
     	 }
       }
@@ -107,7 +110,6 @@ public class SearchProcessor implements Runnable{
 				matcher = pattern.matcher(fileString);
 				while(matcher.find()){
 					searchProcessor.incrementHitsCount();
-					System.out.println("Found -->> "+file.getAbsolutePath());
 				}
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
