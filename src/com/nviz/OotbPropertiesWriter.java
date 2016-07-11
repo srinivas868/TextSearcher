@@ -12,6 +12,8 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import com.csvreader.CsvWriter;
+import com.lib.SearchRecord;
+
 import constants.SearchConstants;
 
 /**
